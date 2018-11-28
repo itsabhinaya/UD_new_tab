@@ -1,0 +1,15 @@
+{
+  "name": "Urban Dictionary",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "See a random word from Urban Dictionary.",
+  "chrome_url_overrides":{
+    "newtab": "index.html"
+  },
+  "background":{
+     "scripts": ["background.js"]
+  },
+  "browser_action": {
+    "default_icon": "icon.png"
+  }
+}
