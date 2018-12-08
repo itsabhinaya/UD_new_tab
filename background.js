@@ -1,13 +1,19 @@
 const url = 'http://api.urbandictionary.com/v0/random';
 var span = document.createElement("span");
 var space_regex = /\n/gi;
-var word_regex=/\[([a-zA-Z0-9]|\s|\_|\-|\/|\')+\]/g;
+var word_regex=/\[([a-zA-Z0-9]|\s|\_|\-|\/|\')+\]/gi;
 
+function toggleDarkLight() {
+  var body = document.getElementById("body");
+  var currentClass = body.className;
+  body.className = currentClass == "dark-mode" ? "light-mode" : "dark-mode";
+}
 
 
 //Takes a sentence and changes the regex words into url words in the sentence.
 function word_url(sentence) {
 	words_to_change = sentence.match(word_regex) //Finds all the words that match the regex of "[words]"
+	console.log(words_to_change)
 	for (i = 0; i < words_to_change.length; i++) { 
 		word = words_to_change[i].substr(1).slice(0, -1) //removes the brackets of words
 		w_url = '<a href="https://www.urbandictionary.com/define.php?term='+word+'">'+word+'</a>' //turns the word into url
@@ -35,13 +41,24 @@ fetch(url)
 
 	var wrapper = document.getElementById("dec");
 	var myHTML = '';
-	for (var i = 0; i < 3; i++) {
-		definition = data.list[i].definition.replace(space_regex,'<br>\n')
-		example = data.list[i].example.replace(space_regex,'<br>\n');
-		myHTML += '<h3 class="definition">' + word_url(definition) + '</h3>';
-		myHTML += '<p class="example">' + word_url(example) + '</p>';
-		myHTML += "<hr>"
+	definition = data.list[0].definition.replace(space_regex,'<br>\n')
+	if (definition == []){
+    // your code here.
+    	definition = ""
+	}else{
+		definition = word_url(definition)
 	}
+	example = data.list[0].example.replace(space_regex,'<br>\n');
+	if (example == []){
+    // your code here.
+    	example = ""
+	}else{
+		example = word_url(example)
+	}
+
+	myHTML += '<h4 class="definition">' + definition + '</h4>';
+	myHTML += '<p class="example">' + example + '</p>';
+	myHTML += "<hr>"
 	wrapper.innerHTML = myHTML
 
 

@@ -1,0 +1,35 @@
+.container {
+	padding: 10px 20px 0px 20px;
+	display: flex;
+	justify-content: center;
+}
+.center {
+  width: 800px;
+  font-family: Tahoma;
+text-decoration: none;
+}
+
+a {
+	color: #00a4a7;
+	text-decoration: none;
+}
+body {
+  background-color: #111;
+  color: #eee;
+}
+
+body {
+  background-color: #111;
+  color: #eee;
+}
+
+.dark_mode {
+  background-color: #111;
+  color: #eee;
+}
+
+.light_mode {
+  background-color: #fcfcff;
+  color: #111;
+
+}
