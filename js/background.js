@@ -116,13 +116,16 @@ $(document).ready(function(){
   function noWordsChecker(sentence) {
     var v = " ";
     chrome.storage.sync.get('no_words', function(storedObj){
+      if(storedObj.no_words){
         substringsArray = storedObj.no_words.split(',');
         // console.log(substringsArray);
         v =  substringsArray.some(substring=>sentence.includes(substring));
         return v;
-      });
+      }
+    });
     return v;
   }
+
 
 
   //Takes a sentence and changes the regex words into url words in the sentence.
@@ -130,10 +133,13 @@ $(document).ready(function(){
     var word_regex=/\[([a-zA-Z0-9]|\s|\_|\-|\/|\')+\]/gi;
     words_to_change = sentence.match(word_regex) //Finds all the words that match the regex of "[words]"
     console.log(words_to_change)
-    for (i = 0; i < words_to_change.length; i++) { 
-      word = words_to_change[i].substr(1).slice(0, -1) //removes the brackets of words
-      w_url = '<a href="https://www.urbandictionary.com/define.php?term='+word+'">'+word+'</a>' //turns the word into url
-      sentence = sentence.replace(words_to_change[i],w_url) //replaces the word with url word
+    //skip the url change if there aren't any
+    if(words_to_change){
+      for (i = 0; i < words_to_change.length; i++) { 
+        word = words_to_change[i].substr(1).slice(0, -1) //removes the brackets of words
+        w_url = '<a href="https://www.urbandictionary.com/define.php?term='+word+'">'+word+'</a>' //turns the word into url
+        sentence = sentence.replace(words_to_change[i],w_url) //replaces the word with url word
+      }
     }
     return sentence;
   }
@@ -150,17 +156,18 @@ $(document).ready(function(){
   }
 
   function wordPartsForOutput(wordParts) {
-      var space_regex = /\n/gi;
+    var space_regex = /\n/gi;
 
     definition = wordParts[1].replace(space_regex,'<br>\n')
-      if (definition == []){
-        definition = ""
+      if (definition == [] || definition == null){
+        definition = " "
       }else{
         definition = word_url(definition)
       }
+
     example = wordParts[2].replace(space_regex,'<br>\n');
-      if (example == []){
-         example = ""
+      if (example == [] || example == null){
+        example = " "
       }else{
        example = word_url(example)
       }
@@ -172,46 +179,55 @@ $(document).ready(function(){
 
   function init(){
     setMode();
-    chrome.storage.sync.get('word_dict', function(storedObj){
-      if (storedObj.word_dict === undefined || storedObj.word_dict === null) {
-        exampleWord = ['clout',
-        '<a href="https://www.urbandictionary.com/define.php?term=Clout">Clout</a> is being <a href="https://www.urbandictionary.com/define.php?term=famous">famous</a> and having <a href="https://www.urbandictionary.com/define.php?term=influence">influence</a>',
-        'Wow - <a href="https://www.urbandictionary.com/define.php?term=Rice">Rice</a>, <a href="https://www.urbandictionary.com/define.php?term=Mitch">Mitch</a>, and <a href="https://www.urbandictionary.com/define.php?term=Banks">Banks</a> have hella clout']
-        outputHtml(exampleWord);
+    if (document.getElementById("word")) {
+      chrome.storage.sync.get('word_dict', function(storedObj){
+        if (storedObj.word_dict === undefined || storedObj.word_dict === null) {
+          exampleWord = ['clout',
+          '<a href="https://www.urbandictionary.com/define.php?term=Clout">Clout</a> is being <a href="https://www.urbandictionary.com/define.php?term=famous">famous</a> and having <a href="https://www.urbandictionary.com/define.php?term=influence">influence</a>',
+          'Wow - <a href="https://www.urbandictionary.com/define.php?term=Rice">Rice</a>, <a href="https://www.urbandictionary.com/define.php?term=Mitch">Mitch</a>, and <a href="https://www.urbandictionary.com/define.php?term=Banks">Banks</a> have hella clout']
+          outputHtml(exampleWord);
 
-        var word_dict = [];
-        chrome.storage.sync.set({ 'word_dict': word_dict }, function() {
-          console.log("word_dict is set")
-        });
-        console.log("dict empty");
-        getAllRandomWords();
+          var word_dict = [];
+          chrome.storage.sync.set({ 'word_dict': word_dict }, function() {
+            console.log("word_dict is set")
+          });
+          console.log("dict empty");
+          getAllRandomWords();
 
-      } else if (storedObj.word_dict.length == 2) {
-        wordPartsForOutput(storedObj.word_dict.shift());
-        chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
-          console.log("word_dict is set")
-        });
+        } else if (storedObj.word_dict.length == 2) {
+          wordPartsForOutput(storedObj.word_dict.shift());
+          chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
+            console.log("word_dict is set")
+          });
 
-        getAllRandomWords();
+          getAllRandomWords();
+          console.log("one left");
 
-        console.log("one left");
-
-      } else {
-        console.log("inside last else");
-
-        wordPartsForOutput(storedObj.word_dict.shift());
-        chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
-          console.log("word_dict is set")
-        });
-
-          // chrome.storage.sync.clear();
-        chrome.storage.sync.get('word_dict', function(storedObj){
+        } else {
           console.log(storedObj.word_dict);
-        });
+          wordPartsForOutput(storedObj.word_dict.shift());
+          chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
+            console.log("word_dict is set")
+          });
+            // chrome.storage.sync.clear();
+          chrome.storage.sync.get('word_dict', function(storedObj){
+            console.log(storedObj.word_dict);
+          });
+        }
+      });
+    }else{
+      console.log(":sldkfslkdflksdjflksdfksdkl");
+      chrome.storage.sync.get('no_words', function(storedObj){
+        console.log("second page");
+        no_words = storedObj.no_words
+        $("#no_words:text").val(no_words);
+        console.log(no_words);
+      });
+    }
 
-      }
-    });
   };
           // chrome.storage.sync.remove('word_dict');
 init();
+            // chrome.storage.sync.clear();
+
 })
