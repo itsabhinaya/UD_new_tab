@@ -55,17 +55,41 @@ $(document).ready(function(){
     var no_words = $('#no_words').val();
 
     console.log(no_words);
+
     chrome.storage.sync.set({ 'no_words': no_words }, function() {
       console.log("no_words event saved");
       $("#no_words:text").val(no_words);
       console.log("pen icon set words");
     });
+
+    $(".save_words").fadeOut(function () {
+      $(".save_words").text("Saved!").fadeIn();
+      $(".save_words").addClass('saved_color');
+      setTimeout(function () {
+        $(".save_words").removeClass('saved_color');
+        $(".save_words").text("Save").fadeIn();
+      }, 2000);
+    });
+
     chrome.storage.sync.remove('word_dict');
     var word_dict = [];
       chrome.storage.sync.set({ 'word_dict': word_dict }, function() {
         console.log("word_dict is set")
       });
     getAllRandomWords();
+  });
+
+  $(".reset_settings").on("click", function(){
+    console.log("Settings reseted");
+    chrome.storage.sync.clear();
+
+     $(".reset_settings").fadeOut(function () {
+      $(".reset_settings").text("Reseted").fadeIn();
+      setTimeout(function () {
+        $(".reset_settings").text("Reset Settings").fadeIn();
+      }, 2000);
+    });
+
   });
 
 
@@ -117,8 +141,9 @@ $(document).ready(function(){
     var v = " ";
     chrome.storage.sync.get('no_words', function(storedObj){
       if(storedObj.no_words){
-        substringsArray = storedObj.no_words.split(',');
-        // console.log(substringsArray);
+        substringsArray = storedObj.no_words.split(',').map(item => item.trim()); //slpit the words into array and remove any trailing whitespaces
+        substringsArray = substringsArray.filter(Boolean); //remove empty array elements
+        console.log(substringsArray);
         v =  substringsArray.some(substring=>sentence.includes(substring));
         return v;
       }
@@ -209,14 +234,13 @@ $(document).ready(function(){
           chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
             console.log("word_dict is set")
           });
-            // chrome.storage.sync.clear();
+
           chrome.storage.sync.get('word_dict', function(storedObj){
             console.log(storedObj.word_dict);
           });
         }
       });
     }else{
-      console.log(":sldkfslkdflksdjflksdfksdkl");
       chrome.storage.sync.get('no_words', function(storedObj){
         console.log("second page");
         no_words = storedObj.no_words
@@ -226,8 +250,6 @@ $(document).ready(function(){
     }
 
   };
-          // chrome.storage.sync.remove('word_dict');
 init();
-            // chrome.storage.sync.clear();
 
 })
