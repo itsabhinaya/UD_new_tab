@@ -4,7 +4,7 @@ $(document).ready(function(){
       if (Object.keys(storedObj).length === 0) {
         console.log("Using default settings");
       }
-      console.log(storedObj.settings);
+      // console.log(storedObj.settings);
       if (storedObj.settings) {
         if (storedObj.settings.mode == 'dark') {
             makeDarkMode();
@@ -18,13 +18,13 @@ $(document).ready(function(){
   function makeDarkMode(argument) {
     $('body').removeClass("light_mode");
     $('body').addClass("dark_mode");
-    console.log("light to dark");
+    // console.log("light to dark");
   }
 
   function makelightMode(argument) {
     $('body').removeClass("dark_mode");
     $('body').addClass("light_mode");
-    console.log("dark to light");
+    // console.log("dark to light");
   }
 
   $('.sun_icon').on("click", function() {
@@ -90,6 +90,17 @@ $(document).ready(function(){
       }, 2000);
     });
 
+
+   chrome.storage.sync.get('word_dict', function(storedObj){
+      var word_dict = [];
+      chrome.storage.sync.set({ 'word_dict': word_dict }, function() {
+        console.log("word_dict is set")
+      });
+      console.log("dict empty");
+      getAllRandomWords();
+    });
+
+
   });
 
 
@@ -123,7 +134,7 @@ $(document).ready(function(){
     var exaCheck = await noWordsChecker(wordArray[2]);
 
     if (defCheck == false && exaCheck == false){
-      console.log("word is safe");
+      // console.log("word is safe");
       chrome.storage.sync.get('word_dict', function(storedObj){
         word_dict = storedObj.word_dict;
         word_dict.push(wordArray);
@@ -143,7 +154,7 @@ $(document).ready(function(){
       if(storedObj.no_words){
         substringsArray = storedObj.no_words.split(',').map(item => item.trim()); //slpit the words into array and remove any trailing whitespaces
         substringsArray = substringsArray.filter(Boolean); //remove empty array elements
-        console.log(substringsArray);
+        // console.log(substringsArray);
         v =  substringsArray.some(substring=>sentence.includes(substring));
         return v;
       }
@@ -157,7 +168,7 @@ $(document).ready(function(){
   function word_url(sentence) {
     var word_regex=/\[([a-zA-Z0-9]|\s|\_|\-|\/|\')+\]/gi;
     words_to_change = sentence.match(word_regex) //Finds all the words that match the regex of "[words]"
-    console.log(words_to_change)
+    // console.log(words_to_change)
     //skip the url change if there aren't any
     if(words_to_change){
       for (i = 0; i < words_to_change.length; i++) { 
@@ -229,15 +240,15 @@ $(document).ready(function(){
           console.log("one left");
 
         } else {
-          console.log(storedObj.word_dict);
+          // console.log(storedObj.word_dict);
           wordPartsForOutput(storedObj.word_dict.shift());
           chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
-            console.log("word_dict is set")
+            // console.log("word_dict is set")
           });
 
-          chrome.storage.sync.get('word_dict', function(storedObj){
-            console.log(storedObj.word_dict);
-          });
+          // chrome.storage.sync.get('word_dict', function(storedObj){
+          //   console.log(storedObj.word_dict);
+          // });
         }
       });
     }else{
