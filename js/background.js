@@ -82,8 +82,9 @@ $(document).ready(function(){
   $(".reset_settings").on("click", function(){
     console.log("Settings reseted");
     chrome.storage.sync.clear();
-
-     $(".reset_settings").fadeOut(function () {
+    
+    $("#no_words:text").val("");
+    $(".reset_settings").fadeOut(function () {
       $(".reset_settings").text("Reseted").fadeIn();
       setTimeout(function () {
         $(".reset_settings").text("Reset Settings").fadeIn();

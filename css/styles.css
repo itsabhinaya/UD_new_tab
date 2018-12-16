@@ -33,6 +33,10 @@ p {
   font-size: 1em;
 }
 
+.reset_help {
+  font-size: .5em;
+}
+
 .container {
   padding: 190px 20px 0px 20px;
   display: flex;
