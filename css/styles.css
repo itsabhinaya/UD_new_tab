@@ -15,26 +15,29 @@
 
 h1 {
   font-family: RobotoBold, Helvetica, Arial, sans-serif;
-  font-size: 2.7em;
+  font-size: 3em;
+  line-height: 1.2em;
+
 }
 
 h4,.save_words {
   font-family: RobotoLight, Helvetica, Arial, sans-serif;
-  font-size: 1.3em;
+  font-size: 1.5em;
 }
 
 h5{
   font-family: RobotoLight, Helvetica, Arial, sans-serif;
-  font-size: 1.5em;
+  font-size: 1.7em;
 }
 
 p {
   font-family: RobotoLightItalic, Helvetica, Arial, sans-serif;
-  font-size: 1em;
+  font-size: 1.3em;
+  line-height: 1.3em;
 }
 
 .reset_help {
-  font-size: .5em;
+  font-size: 1.5em;
 }
 
 .container {
@@ -44,8 +47,9 @@ p {
 }
 .center {
   width: 700px;
-  font-family: Tahoma;
+  font-family: RobotoLight, Helvetica, Arial, sans-serif;
   text-decoration: none;
+  overflow: scroll;
 }
 
 a {
@@ -56,12 +60,12 @@ a {
 body {
   background-color: #111;
   color: #eee;
-  line-height: 1.3;
+  line-height: 2.1em;
 
 }
 
-p.sun_icon, p.pen_icon, p.back_icon, .reset_settings {
-  font-family: JunctionRegular, Helvetica, Arial, sans-serif;
+p.sun_icon, p.pen_icon, p.back_icon {
+  font-family: RobotoBold, Helvetica, Arial, sans-serif;
   font-size: 1.3em;
   cursor:pointer;
   color: #00a4a7;
@@ -108,7 +112,7 @@ input[type=text], select {
   border: none;
   border-bottom: 1px solid ;
   color:inherit;
-  font-size: 1.1em;
+  font-size: 1.3em;
   font-family: RobotoLight, Helvetica, Arial, sans-serif;
 }
 

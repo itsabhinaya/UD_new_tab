@@ -87,7 +87,7 @@ $(document).ready(function(){
     $(".reset_settings").fadeOut(function () {
       $(".reset_settings").text("Reseted").fadeIn();
       setTimeout(function () {
-        $(".reset_settings").text("Reset Settings").fadeIn();
+        $(".reset_settings").text("Reset All Settings").fadeIn();
       }, 2000);
     });
 
