@@ -57,7 +57,7 @@ $(document).ready(function(){
     console.log(no_words);
 
     chrome.storage.sync.set({ 'no_words': no_words }, function() {
-      console.log("no_words event saved");
+      // console.log("no_words event saved");
       $("#no_words:text").val(no_words);
       console.log("pen icon set words");
     });
@@ -113,7 +113,7 @@ $(document).ready(function(){
       data.list.map(info => {
         allRandomWords.push(info.word);
       });
-      console.log(allRandomWords);
+      // console.log(allRandomWords);
     });
 
     allRandomWords.forEach(function(randomWord){
@@ -130,39 +130,35 @@ $(document).ready(function(){
     .then(data => {
       wordArray = [word,data.list[0].definition,data.list[0].example];
       // console.log([word,data.list[0].definition,data.list[0].example]);
-    });
-    var defCheck = await noWordsChecker(wordArray[1]);
-    var exaCheck = await noWordsChecker(wordArray[2]);
+        chrome.storage.sync.get('no_words', function(storedObj){
+          if(storedObj.no_words){
 
-    if (defCheck == false && exaCheck == false){
-      // console.log("word is safe");
-      chrome.storage.sync.get('word_dict', function(storedObj){
+            substringsArray = storedObj.no_words.split(',').map(item => item.trim()); //slpit the words into array and remove any trailing whitespaces
+            substringsArray = substringsArray.filter(Boolean); //remove empty array elements
+            // console.log(substringsArray);
+            defCheck =  substringsArray.some(substring=>data.list[0].definition.includes(substring));
+            exaCheck =  substringsArray.some(substring=>data.list[0].example.includes(substring));
+            if (defCheck == false && exaCheck == false){
+              // console.log("word is safe");
+              pushWordToWordDict(wordArray);
+            }
+          }else{
+              pushWordToWordDict(wordArray);
+          }
+        });
+      });
+  
+  }
+
+  function pushWordToWordDict(wordArray){
+    chrome.storage.sync.get('word_dict', function(storedObj){
         word_dict = storedObj.word_dict;
         word_dict.push(wordArray);
         chrome.storage.sync.set({ 'word_dict': word_dict }, function() {
           console.log("new word is added to array");
         });
       });
-    }else{
-      console.log(wordArray);
-    }
   }
-
-
-  function noWordsChecker(sentence) {
-    var v = " ";
-    chrome.storage.sync.get('no_words', function(storedObj){
-      if(storedObj.no_words){
-        substringsArray = storedObj.no_words.split(',').map(item => item.trim()); //slpit the words into array and remove any trailing whitespaces
-        substringsArray = substringsArray.filter(Boolean); //remove empty array elements
-        // console.log(substringsArray);
-        v =  substringsArray.some(substring=>sentence.includes(substring));
-        return v;
-      }
-    });
-    return v;
-  }
-
 
 
   //Takes a sentence and changes the regex words into url words in the sentence.
@@ -218,7 +214,7 @@ $(document).ready(function(){
     setMode();
     if (document.getElementById("word")) {
       chrome.storage.sync.get('word_dict', function(storedObj){
-        if (storedObj.word_dict === undefined || storedObj.word_dict === null) {
+        if (!storedObj.word_dict) {
           exampleWord = ['clout',
           '<a href="https://www.urbandictionary.com/define.php?term=Clout">Clout</a> is being <a href="https://www.urbandictionary.com/define.php?term=famous">famous</a> and having <a href="https://www.urbandictionary.com/define.php?term=influence">influence</a>',
           'Wow - <a href="https://www.urbandictionary.com/define.php?term=Rice">Rice</a>, <a href="https://www.urbandictionary.com/define.php?term=Mitch">Mitch</a>, and <a href="https://www.urbandictionary.com/define.php?term=Banks">Banks</a> have hella clout']
@@ -231,17 +227,21 @@ $(document).ready(function(){
           console.log("dict empty");
           getAllRandomWords();
 
-        } else if (storedObj.word_dict.length == 2) {
+        } else if (storedObj.word_dict.length <= 2) {
           wordPartsForOutput(storedObj.word_dict.shift());
           chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
             console.log("word_dict is set")
           });
 
           getAllRandomWords();
-          console.log("one left");
+          console.log("new words added word_dict");
+          // chrome.storage.sync.get('word_dict', function(storedObj){
+          //   console.log(storedObj.word_dict);
+          // });
 
         } else {
           // console.log(storedObj.word_dict);
+
           wordPartsForOutput(storedObj.word_dict.shift());
           chrome.storage.sync.set({ 'word_dict': storedObj.word_dict }, function() {
             // console.log("word_dict is set")
